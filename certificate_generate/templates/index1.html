@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    
+    <link href="{% static 'mystyle.css' %}" rel="stylesheet">
+        
+    
+</head>
+<body>
+    <div class="container">
+    {% for i in enroll %}
+<p class="itis">It is hrereby certified that</p>
+<p class="stuname">{{i.student_name}}</p>
+<p class="having">Having successfully completed the following course </p>
+<p class="course_name">{{i.course_name}}</p>
+<p class="date">{{i.enroll_date}} - {{i.end_date}}</p>
+<p class="rig">RIG/QA/2500039193</p>
+<p class="sdate">{{i.end_date}}</p>
+{% endfor %}
+</div>
+<button onclick="printcertificate()">Print</button>
+
+<script>
+    function printcertificate(){
+        var el=document.getElementById("container");
+        el.setAttribute('border','1px');
+        newPrint=window.open("");
+        newPrint.document.write(el.outerHTML);
+        newPrint.print();
+        newPrint.close();
+    }
+</script>
+</body>
+</html>

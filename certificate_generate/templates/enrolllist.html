@@ -1,0 +1,84 @@
+{% extends 'starter-template.html' %}
+{% block content %}
+
+<div class="table-responsive">
+    <!-- Projects table -->
+    <table class="table align-items-center mb-0">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col" >Student</th>
+          <th scope="col" class="text-end">Course</th>
+          <th scope="col" class="text-end">Enroll Date</th>
+          <th scope="col" class="text-end">Status</th>
+          <th scope="col" class="text-end"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in page_obj %}
+        <tr>
+          <td >{{i.student_name}}</td>
+          <td class="text-end">{{i.course_name}}</td>
+          <td class="text-end">
+            {{i.enroll_date}}
+          </td>
+          <td class="text-end">
+            {% if i.status == False %}
+            <a href="{% url 'comstatus' i.id %}"><button class=" btn btn-secondary">Incomplete</button></a>
+            {% else %}
+            <button class=" btn btn-warning">Complete</button>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a href="{% url 'deleteenroll' i.id %}"><button type="submit" class="btn btn-danger">Delete</button></a>
+            {% if i.status == True %}
+            <a href="{% url 'homeview' i.id %}"><button class="btn btn-success">Download</button></a>
+            {% else %}
+
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <nav aria-label="Page navigation example" class="pt-3">
+    <ul class="pagination">
+      
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo; Previous</span>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Previous">&laquo; Previous</span>
+      </li>
+      {% endif %}
+  
+      <!-- Current page as active -->
+      <li class="page-item active" aria-current="page">
+        <span class="page-link">
+          {{ page_obj.number }}
+        </span>
+      </li>
+  
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+          <span aria-hidden="true">Next &raquo;</span>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Next">Next &raquo;</span>
+      </li>
+      {% endif %}
+  
+    </ul>
+  </nav>
+
+
+
+{% endblock content %}

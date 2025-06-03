@@ -1,0 +1,53 @@
+body{
+    background-image: url("image/New_Project.png");
+    background-color: white;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 70%; 
+    background-position: center;
+    
+    
+}
+.itis{
+    margin-top:270px;
+    font-size: 22px;
+    text-align: center;
+    line-height: 1px;
+}
+.stuname{
+    font-weight: bold;
+    font-size: 35px;
+    text-align: center;
+}
+.having{
+    font-size: 18px;
+    text-align: center;
+    line-height: 3px;
+}
+.course_name{
+    font-size: 18px;
+    text-align: center;
+    margin-top:25px;
+    line-height: 5px;
+    
+}
+.date{
+    font-size: 18px;
+    text-align: center;
+    line-height: 4px;
+    
+}
+.rig{
+    font-size: 20px;
+    margin-left: 380px; 
+    margin-top:55px;
+}
+.sdate{
+    font-size: 18px;
+    margin-left: 400px;
+    line-height: 4px;
+}
+button{
+    margin-left: 1200px;
+    margin-top:40px;
+}

@@ -1,0 +1,16 @@
+{% extends 'starter-template.html' %}
+{% block content %}
+
+    <form method="POST" class='w-50'>
+        {% csrf_token %}
+        <div class="mt-4">
+            {{course.course_name}}
+        </div>
+        <div class="mt-4">
+            {{course.duration}}
+        </div>
+        <div class="mt-4">
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+    </form>
+{% endblock content %}

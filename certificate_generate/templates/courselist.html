@@ -1,0 +1,87 @@
+{% extends 'starter-template.html' %}
+{% block content %}
+<div class="table-responsive">
+    <!-- Projects table -->
+    <table class="table align-items-center mb-0">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col" >Course</th>
+          <th scope="col" class="text-end">Duration</th>
+          <th scope="col" class="text-end">Trainer</th>
+          <th scope="col" class="text-end"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in page_obj %}
+        <tr>
+          <td >{{i.course_name}}</td>
+          <td class="text-end">{{i.duration}} months</td>
+          <td class="text-end">{{i.trainer_name}}</td>
+          <td class="text-end">
+            <a href="{% url 'deletecourse' i.id %}"><button type="submit" class="btn btn-danger">Delete</button></a>
+            <a href="{% url 'updatecourse' i.id %}"><button type="submit" class="btn btn-success">Update</button></a>
+          </td>
+        </tr>
+        {% endfor %}
+       
+      </tbody>
+    </table>
+  </div>
+  <!-- <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div> -->
+<nav aria-label="Page navigation example" class="pt-3">
+    <ul class="pagination">
+      
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo; Previous</span>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Previous">&laquo; Previous</span>
+      </li>
+      {% endif %}
+  
+      <!-- Current page as active -->
+      <li class="page-item active" aria-current="page">
+        <span class="page-link">
+          {{ page_obj.number }}
+        </span>
+      </li>
+  
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+          <span aria-hidden="true">Next &raquo;</span>
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Next">Next &raquo;</span>
+      </li>
+      {% endif %}
+  
+    </ul>
+  </nav>
+  
+   
+   
+
+{% endblock content %}

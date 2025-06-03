@@ -1,0 +1,31 @@
+{% extends 'starter-template.html' %}
+{% block content %}
+<div class="table-responsive">
+    <!-- Projects table -->
+    <table id="example" class="table table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th >Student</th>
+          <th >Email</th>
+          <th >Phone</th>
+          <th ></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in student %}
+        <tr>
+          <td >{{i.student_name}}</td>
+          <td >{{i.email}}</td>
+          <td >{{i.phone}}</td>
+          <td class="text-end">
+            <a href="{% url 'deletestudent' i.id %}"><button type="submit" class="btn btn-danger">Delete</button></a>
+            <a href="{% url 'updatestudent' i.id %}"><button type="submit" class="btn btn-success">Update</button></a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+
+{% endblock content %}
