@@ -1,17 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <a href="{% url 'createcourse' %}">Create Course</a><br>
-    <a href="{% url 'createstudent' %}">Create Student</a><br>
-    <a href="{% url 'enrollment'%}">Enrollment</a><br>
-    <a href="{% url 'studentlist' %}">Student List</a><br>
-    <a href="{% url 'courselist' %}">Course List</a><br>
-    <a href="{% url 'enrolllist' %}">Enroll List</a><br>
-    <a href="{% url 'logout' %}"><button>Log out</button></a>
-</body>
-</html>
+{% extends 'starter-template.html' %}
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+      <div class="card card-stats card-round">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-icon">
+              <div
+                class="icon-big text-center icon-primary bubble-shadow-small"
+              >
+                <i class="fas fa-users"></i>
+              </div>
+            </div>
+            <div class="col col-stats ms-3 ms-sm-0">
+              <div class="numbers">
+                <p class="card-category">Students</p>
+                <h4 class="card-title">{{student}}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+      <div class="card card-stats card-round">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-icon">
+              <div
+                class="icon-big text-center icon-info bubble-shadow-small"
+              >
+                <i class="fas fa-user-check"></i>
+              </div>
+            </div>
+            <div class="col col-stats ms-3 ms-sm-0">
+              <div class="numbers">
+                <p class="card-category">Trainers</p>
+                <h4 class="card-title">{{trainer}}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+      <div class="card card-stats card-round">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-icon">
+              <div
+                class="icon-big text-center icon-success bubble-shadow-small"
+              >
+                <i class="fas fa-luggage-cart"></i>
+              </div>
+            </div>
+            <div class="col col-stats ms-3 ms-sm-0">
+              <div class="numbers">
+                <p class="card-category">Courses</p>
+                <h4 class="card-title">{{course}}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+      <div class="card card-stats card-round">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-icon">
+              <div
+                class="icon-big text-center icon-secondary bubble-shadow-small"
+              >
+                <i class="far fa-check-circle"></i>
+              </div>
+            </div>
+            <div class="col col-stats ms-3 ms-sm-0">
+              <div class="numbers">
+                <p class="card-category">Active</p>
+                <h4 class="card-title">{{active_enrollments}}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-md-4">
+
+        <div class="card card-round">
+            <div class="card-body">
+              <div class="card-head-row card-tools-still-right">
+                <div class="card-title">Trainers</div>
+                
+              </div>
+              <div class="card-list py-4">
+
+               
+                  {% for i in trainer_obj %}
+                  <div class="item-list">
+                  <div class="info-user ms-3">
+                    <div class="username">{{i.trainer_name}}</div>
+                   
+                  </div>
+                  <a href="{% url 'updatetrainer' i.id %}"><button class="btn btn-icon btn-link op-8 me-1">
+                    <i class="fas fa-edit"></i>
+                  </button></a>
+                  <a href="{% url 'deletetrainer' i.id %}"><button class="btn btn-icon btn-link btn-danger op-8">
+                    <i class="fas fa-ban"></i>
+                  </button></a>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+    </div>
+    <div class="col-md-8">
+      <div class="card card-round">
+        <div class="card-header">
+          <div class="card-head-row card-tools-still-right">
+            <div class="card-title">Courses</div>
+            </div>
+          </div>
+        
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <!-- Projects table -->
+            <table class="table align-items-center mb-0">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Course Name</th>
+                  <th scope="col" class="text-end">Duration</th>
+                  <th scope="col" class="text-end">Trainer</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in courselist %}
+                <tr>
+                  <th scope="row">
+                    
+                    {{i.course_name}}
+                  </th>
+                  <td class="text-end">{{i.duration}} months</td>
+                  <td class="text-end">{{i.trainer_name}}</td>
+                  
+                </tr>
+                {% endfor %}
+                
+              </tbody>
+            </table>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  {% endblock content %}

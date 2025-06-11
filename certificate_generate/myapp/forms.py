@@ -33,6 +33,8 @@ class EnrollModelForm(forms.ModelForm):
             'course_name' :forms.Select(attrs={'class': 'form-select'}),
         }
 
+
+
 class TrainerModelForm(forms.ModelForm):
     class Meta:
         model=Trainer

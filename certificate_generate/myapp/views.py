@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.core.paginator import Paginator
 from django.utils import timezone
-
 from .models import *
 
 
@@ -44,14 +43,28 @@ def deletecourse(request,id):
 
 def updatecourse(request,id):
     course = Course.objects.get(id=id)
-    obj = CourseModelForm(instance=course)
+    page_obj = CourseModelForm(instance=course)
     if request.method=="POST":
         obj = CourseModelForm(request.POST, instance=course)
         if obj.is_valid():
          obj.save()
         return redirect('/courselist')
-    context={"course":course,"obj":obj}
+    context={"course":course,"page_obj":page_obj}
     return render(request,'updatecourse.html',context)
+
+def enroll(request,id):
+    stu = Student.objects.get(id=id)
+    obj = EnrollModelForm(instance=stu)
+    if request.method=="POST":
+        obj = EnrollModelForm(request.POST, instance=stu)
+        if obj.is_valid():
+         obj.save()
+        return redirect('/courselist')
+    context={"stu":stu,"obj":obj}
+    return render(request,'enroll.html',context)
+
+
+
 
 def createstudent(request):
     student=StudentModelForm()
@@ -86,6 +99,11 @@ def updatestudent(request,id):
         return redirect('/studentlist')
     context={"student":student,"obj":obj}
     return render(request,'updatestudent.html',context)
+
+def detailstudent(request,id):
+    student=Student.objects.filter(id=id)
+    context={"student":student}
+    return render(request,'studentdetail.html',context)
 
 
 
@@ -127,6 +145,7 @@ def register_view(request):
             usr.set_password(password)
             usr.is_staff=True
             usr.save()
+
             return redirect ('/login')
     else:
         return render(request,'register.html')
@@ -150,8 +169,6 @@ def logoutview(request):
     logout(request)
     return redirect('/login/')
     
-def homepage(request):
-    return render(request,'homepage.html')
 
 class SuperUser(object):
      def dispatch(self,request,*arg,**kwargs):
@@ -171,7 +188,14 @@ class LoginRequire(object):
     
 class IndexView(LoginRequire,SuperUser,View):
     def get(self,request):
-        return render(request,'starter-template.html')
+        student=Student.objects.count()
+        trainer=Trainer.objects.count()
+        course=Course.objects.count()
+        active_enrollments = Enrollment.objects.filter(status=False).count()
+        courselist=Course.objects.all()
+        trainer_obj=Trainer.objects.all()
+        context={"student":student,"trainer":trainer,"course":course,"active_enrollments":active_enrollments,"courselist":courselist,"trainer_obj":trainer_obj}
+        return render(request,'homepage.html',context)
 
 def index1(request):
     return render(request,'starter-template.html')
@@ -220,14 +244,21 @@ def deletetrainer(request,id):
     return redirect('/trainerlist')
 
 def updatetrainer(request,id):
-    trainer_obj = Trainer.objects.get(id=id)
-    obj = TrainerModelForm(instance=trainer_obj)
+    obj = Trainer.objects.get(id=id)
+    trainer_obj = TrainerModelForm(instance=obj)
     if request.method=="POST":
-        obj = TrainerModelForm(request.POST, instance=trainer_obj)
-        if obj.is_valid():
-         obj.save()
+        trainer_obj = TrainerModelForm(request.POST, instance=obj)
+        if trainer_obj.is_valid():
+         trainer_obj.save()
         return redirect('/trainerlist')
     context={"trainer_obj":trainer_obj,"obj":obj}
     return render(request,'updatetrainer.html',context)
 
-    
+def homepage(request):
+    student=Student.objects.count()
+    trainer=Trainer.objects.count()
+    course=Course.objects.count()
+    context={"student":student,"trainer":trainer,"course":course}
+    return render(request,"homepage.html",context)
+
+

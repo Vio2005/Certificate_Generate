@@ -3,14 +3,14 @@
 <html lang="en">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Kaiadmin - Bootstrap 5 Admin Dashboard</title>
+    <title>RIG digital certificate</title>
     <meta
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
     />
     <link
       rel="icon"
-      href="{% static 'assets/img/kaiadmin/favicon.ico' %}"
+      href="{% static 'image/riglogo.png' %}"
       type="image/x-icon"
     />
 
@@ -40,10 +40,11 @@
     <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}" />
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}" />
+    <!-- <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}" /> -->
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" href="{% static 'mystyle.css' %}">
     
 
   </head>
@@ -54,14 +55,14 @@
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
-            <a href="index.html" class="logo">
+           
               <img
-                src="{% static 'assets/img/kaiadmin/logo_light.svg' %}"
+                src="{% static 'image/riglogo.png' %}"
                 alt="navbar brand"
-                class="navbar-brand"
-                height="20"
+                class="riglogo"
+  
               />
-            </a>
+         <p class="logoname">Digital Certificate</p>
             <div class="nav-toggle">
               <button class="btn btn-toggle toggle-sidebar">
                 <i class="gg-menu-right"></i>
@@ -93,7 +94,7 @@
                 <div class="collapse" id="dashboard">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="../demo1/index.html">
+                      <a href="{% url 'indexview' %}">
                         <span class="sub-item">Dashboard 1</span>
                       </a>
                     </li>

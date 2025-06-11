@@ -1,53 +1,87 @@
-body{
-    background-image: url("image/New_Project.png");
-    background-color: white;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: 70%; 
-    background-position: center;
-    
+img{
+   
+  position:relative;
+  width:900px;
+  left:17%;
+  
+  
     
 }
 .itis{
-    margin-top:270px;
-    font-size: 22px;
-    text-align: center;
-    line-height: 1px;
+    position:absolute;
+    top:40%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
 }
 .stuname{
+    position:absolute;
+    top:43%;
+    left: 50%;
+    transform: translateX(-50%);
     font-weight: bold;
     font-size: 35px;
-    text-align: center;
+    
 }
 .having{
-    font-size: 18px;
-    text-align: center;
-    line-height: 3px;
+    font-size: 17px;
+    position:absolute;
+    top:56%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 .course_name{
-    font-size: 18px;
-    text-align: center;
-    margin-top:25px;
-    line-height: 5px;
+    font-size: 17px;
+    position:absolute;
+    top:60%;
+    left: 50%;
+    transform: translateX(-50%);
     
 }
 .date{
-    font-size: 18px;
-    text-align: center;
-    line-height: 4px;
+    font-size: 17px;
+    position:absolute;
+    top:64%;
+    left: 50%;
+    transform: translateX(-50%);
     
 }
 .rig{
     font-size: 20px;
-    margin-left: 380px; 
-    margin-top:55px;
+    position:absolute;
+    top:72%;
+    left: 28%;
+    transform: translateX(-50%);
 }
 .sdate{
-    font-size: 18px;
-    margin-left: 400px;
-    line-height: 4px;
+    font-size: 20px;
+    position:absolute;
+    top:77%;
+    left: 28%;
+    transform: translateX(-50%);
 }
-button{
-    margin-left: 1200px;
-    margin-top:40px;
+
+.print{
+    position:absolute;
+    top:10px;
+    left:20px;
+    padding: 8px;
+    background-color: skyblue;
+    border-style: none;
+    border-radius: 5px;
+    width:60px;
+    height:30px;
+    color:white;
+}
+.riglogo{
+    width:80px;
+    height:80px;
+    position:absolute;
+    left:0%;
+}
+.logoname{
+    position:absolute;
+    left:29%;
+    top:30%;
+    color:white;
 }

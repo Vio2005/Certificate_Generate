@@ -1,0 +1,8 @@
+{% extends 'starter-template.html' %}
+{% block content %}
+{% for i in student %}
+<p>Name:{{i.student_name}}</p>
+<p>Email:{{i.email}}</p>
+<p>Phone:{{i.phone}}</p>
+{% endfor %}
+{% endblock content %}

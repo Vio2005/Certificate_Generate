@@ -1,39 +1,72 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    
-    
-    <link href="{% static 'mystyle.css' %}" rel="stylesheet">
-        
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Certificate</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'mystyle.css' %}" />
+  
+  <style>
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      button {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-    {% for i in enroll %}
-<p class="itis">It is hrereby certified that</p>
-<p class="stuname">{{i.student_name}}</p>
-<p class="having">Having successfully completed the following course </p>
-<p class="course_name">{{i.course_name}}</p>
-<p class="date">{{i.enroll_date}} - {{i.end_date}}</p>
-<p class="rig">RIG/QA/2500039193</p>
-<p class="sdate">{{i.end_date}}</p>
-{% endfor %}
-</div>
-<button onclick="printcertificate()">Print</button>
+  <div style="position: relative; width: 900px; margin: 0 auto;" id="container">
+    <img src="{% static 'image/New_Project.png' %}" alt="Certificate Template" style="width: 900px; position: relative; left: 0;">
 
-<script>
-    function printcertificate(){
-        var el=document.getElementById("container");
-        el.setAttribute('border','1px');
-        newPrint=window.open("");
-        newPrint.document.write(el.outerHTML);
-        newPrint.print();
-        newPrint.close();
+    {% for i in enroll %}
+    <p class="itis">It is hereby certified that</p>
+    <p class="stuname">{{ i.student_name }}</p>
+    <p class="having">Having successfully completed the following course</p>
+    <p class="course_name">{{ i.course_name }}</p>
+    <p class="date">{{ i.enroll_date }} - {{ i.end_date }}</p>
+    <p class="rig">RIG/QA/2500039193</p>
+    <p class="sdate">{{ i.end_date }}</p>
+    {% endfor %}
+  </div>
+
+  <button class="print" onclick="printcertificate()">Print</button>
+
+  <script>
+    function printcertificate() {
+      var el = document.getElementById("container");
+      var newWin = window.open('', '', 'width=1000,height=800');
+      newWin.document.write(`
+        <html>
+        <head>
+          <title>Print Certificate</title>
+          <link rel="stylesheet" type="text/css" href="{% static 'mystyle.css' %}">
+          <style>
+            @media print {
+              body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+              button {
+                display: none;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${el.outerHTML}
+        </body>
+        </html>
+      `);
+      newWin.document.close();
+      newWin.focus();
+      newWin.print();
+      newWin.close();
     }
-</script>
+  </script>
 </body>
 </html>

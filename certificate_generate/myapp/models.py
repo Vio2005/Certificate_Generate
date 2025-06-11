@@ -18,10 +18,10 @@ class Course(models.Model):
 class Student(models.Model):
     student_name=models.CharField(max_length=100)
     email=models.EmailField()
-    phone=models.CharField()
+    phone=models.CharField(blank=True,null=True)
     def __str__(self):
         return self.student_name
-
+    
     
 class Enrollment(models.Model):
     student_name=models.ForeignKey(Student,on_delete=models.CASCADE)
@@ -31,6 +31,9 @@ class Enrollment(models.Model):
     status=models.BooleanField(default=False)
     def __str__(self):
         return f'{self.student_name}......{self.course_name}'
+
+
+        
     
 
 
