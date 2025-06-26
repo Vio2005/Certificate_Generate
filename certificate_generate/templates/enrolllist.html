@@ -1,6 +1,13 @@
 {% extends 'starter-template.html' %}
 {% block content %}
 
+<a href="{% url 'enrollinput' %}"><button type="button" class="btn btn-primary" style="margin-bottom: 20px;">
+  Enroll Student
+</button></a>
+
+
+
+
 <div class="table-responsive">
     <!-- Projects table -->
     <table class="table align-items-center mb-0">
@@ -15,6 +22,7 @@
       </thead>
       <tbody>
         {% for i in page_obj %}
+
         <tr>
           <td >{{i.student_name}}</td>
           <td class="text-end">{{i.course_name}}</td>
@@ -29,9 +37,18 @@
             {% endif %}
           </td>
           <td class="text-end">
-            <a href="{% url 'deleteenroll' i.id %}"><button type="submit" class="btn btn-danger">Delete</button></a>
+            <a href="{% url 'deleteenroll' i.id %}"><button type="submit" class="btn btn-icon btn-link btn-danger op-8 btn "><i class="fas fa-times-circle fs-4"></i></button></a>
+
             {% if i.status == True %}
-            <a href="{% url 'homeview' i.id %}"><button class="btn btn-success">Download</button></a>
+            {% if i.email_status == False %}
+            
+            <a href="{% url 'email' i.id %}"><button type="submit" class="btn btn-icon btn-link op-8 me-2 "><i class="far fa-envelope fs-4"></i></button></a>
+            {% else %}
+            <button type="submit" class="btn btn-secondary">Email sent</button>
+            {% endif %}
+            
+            <a href="{% url 'homeview' i.id %}"><button type="submit" class="btn btn-icon btn-link btn-success op-8"><i class="fas fa-download fs-4"></i></button></a>
+
             {% else %}
 
             {% endif %}

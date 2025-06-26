@@ -22,16 +22,16 @@
 <body>
   <div style="position: relative; width: 900px; margin: 0 auto;" id="container">
     <img src="{% static 'image/New_Project.png' %}" alt="Certificate Template" style="width: 900px; position: relative; left: 0;">
-
-    {% for i in enroll %}
+    
+    
     <p class="itis">It is hereby certified that</p>
-    <p class="stuname">{{ i.student_name }}</p>
+    <p class="stuname">{{ enroll.student_name }}</p>
     <p class="having">Having successfully completed the following course</p>
-    <p class="course_name">{{ i.course_name }}</p>
-    <p class="date">{{ i.enroll_date }} - {{ i.end_date }}</p>
-    <p class="rig">RIG/QA/2500039193</p>
-    <p class="sdate">{{ i.end_date }}</p>
-    {% endfor %}
+    <p class="course_name">{{ enroll.course_name }}</p> 
+    <p class="date">{{ enroll.enroll_date }} - {{ enroll.end_date }}</p>
+    <p class="rig">RIG/{{ enroll.course_name.short_name }}/2500039193</p> 
+    <p class="sdate">{{ enroll.email_date }}</p>
+
   </div>
 
   <button class="print" onclick="printcertificate()">Print</button>

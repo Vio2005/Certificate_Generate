@@ -1,11 +1,41 @@
 {% extends 'starter-template.html' %}
 {% block content %}
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="margin-bottom: 20px;">
+  Add Course
+</button>
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Create Course Form</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+          <form method="POST">
+            {% csrf_token %}
+            {{ courseform.as_p }}
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
+          </form>
+      
+      </div>
+     
+    </div>
+  </div>
+</div>
+
+<!--End Modal-->
+
 <div class="table-responsive">
     <!-- Projects table -->
     <table class="table align-items-center mb-0">
       <thead class="thead-light">
         <tr>
           <th scope="col" >Course</th>
+          <th scope="col" >Short Name</th>
           <th scope="col" class="text-end">Duration</th>
           <th scope="col" class="text-end">Trainer</th>
           <th scope="col" class="text-end"></th>
@@ -15,6 +45,7 @@
         {% for i in page_obj %}
         <tr>
           <td >{{i.course_name}}</td>
+          <td >{{i.short_name}}</td>
           <td class="text-end">{{i.duration}} months</td>
           <td class="text-end">{{i.trainer_name}}</td>
           <td class="text-end">

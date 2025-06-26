@@ -6,9 +6,10 @@ from django.forms import DateInput
 class CourseModelForm(forms.ModelForm):
     class Meta:
         model=Course
-        fields=['course_name','duration','trainer_name']
+        fields=['course_name','short_name','duration','trainer_name']
         widgets = {
             'course_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter course name'}),
+            'short_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter short name'}),            
             'duration': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter duration '}),
             'trainer_name' :forms.Select(attrs={'class': 'form-select'}),
             

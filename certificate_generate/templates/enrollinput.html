@@ -1,0 +1,14 @@
+{% extends 'starter-template.html' %}
+{% block content %}
+
+    <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <input type="file" name="list" id="formFile">
+        <select name="course">
+            {% for i in course %}
+            <option>{{i.course_name}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Save</button>
+
+    </form>
+{% endblock content %}

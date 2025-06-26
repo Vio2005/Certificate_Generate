@@ -29,6 +29,13 @@ urlpatterns = [
     path('updatetrainer/<int:id>/', updatetrainer,name='updatetrainer'),
     path('createtrainer/', createtrainer,name='createtrainer'),
     path('detailstudent/<int:id>/', detailstudent,name='detailstudent'),
+    path('fileinput/',fileinput,name='fileinput'),
+    path('studentinput/',studentinput,name='studentinput'),
+    path('email/<int:id>/', email, name='email'),
+    path('enrollinput/', enrollinput, name='enrollinput'),
     
+    
+
+
    
 ]
