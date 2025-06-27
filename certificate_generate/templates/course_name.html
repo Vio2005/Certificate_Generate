@@ -1,0 +1,12 @@
+{% extends 'starter-template.html' %}
+
+{% block content %}
+  {% block enroll_content %}
+    <h2>Select a Course</h2>
+    {% for i in course_name %}
+      <a href="{% url 'course_enrollments' i.id %}">
+        <button type="button">{{ i.course_name }}</button>
+      </a>
+    {% endfor %}
+  {% endblock enroll_content %}
+{% endblock content %}

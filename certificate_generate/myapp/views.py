@@ -230,8 +230,16 @@ def deleteenroll(request,id):
     return redirect('/enrolllist')
 
 def comstatus(request,id):
-    page_obj=Enrollment.objects.filter(id=id).update(status=True,end_date=timezone.now())
-    return redirect('/enrolllist')
+    enroll = Enrollment.objects.get(id=id)
+    enroll.status = True
+    enroll.end_date = timezone.now()
+    enroll.save()
+    return redirect('enrollview', id=enroll.course_name.id)
+
+def complete_all_status(request, id):
+    course = Course.objects.get(id=id)
+    Enrollment.objects.filter(course_name=course).update(status=True, end_date=timezone.now())
+    return redirect('enrollview', id=course.id)
 
 def createtrainer(request):
     trainer=TrainerModelForm()
@@ -429,3 +437,26 @@ www.rig-info.com
     os.remove(html_path)
 
     return redirect('enrolllist')
+
+def enrollview(request,id=None):
+    course_name = Course.objects.all()
+
+    course = None
+    enrollments = None
+
+    if id is not None:
+        course = Course.objects.get(id=id)
+        enrollments = Enrollment.objects.filter(course_name=course)
+
+    return render(request, 'enrollview.html', {
+        'course_name': course_name,
+        'course': course,
+        'enrollments': enrollments
+    })
+def course_enrollments(request, id):
+    course = Course.objects.get(id=id)
+    enrollments = Enrollment.objects.filter(course_name=course)
+    return render(request, 'enrollview.html', {
+        'course': course,
+        'enrollments': enrollments
+    })

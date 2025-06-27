@@ -1,0 +1,135 @@
+{% extends 'starter-template.html' %}
+{% block content %}
+
+<style>
+  .abc {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .ab {
+    flex: 1;
+    padding: 20px;
+  }
+
+  .si {
+    width: 200px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-left: 2px solid #ddd;
+    position: sticky;
+    top: 20px;
+  }
+
+  .si h3 {
+    margin-top: 0;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .si a {
+    text-decoration: none;
+  }
+
+  .si button {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+    padding: 8px 10px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .si button:hover {
+    background-color: #0056b3;
+  }
+</style>
+
+<a href="{% url 'enrollinput' %}"><button type="button" class="btn btn-primary" style="margin-bottom: 20px;">
+    Enroll Student
+  </button></a>
+
+<div class="abc">
+
+  <!-- MAIN CONTENT -->
+  <div class="ab">
+    {% if course %}
+      <h2>Students enrolled in {{ course.course_name }}</h2>
+      <a href="{% url 'complete_all_status' course.id %}" class="btn btn-success mb-3">
+        Change All to Complete
+      </a>
+      <div class="table-responsive">
+        <!-- Projects table -->
+        <table class="table align-items-center mb-0">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col" >Student</th>
+              <th scope="col" class="text-end">Course</th>
+              <th scope="col" class="text-end">Enroll Date</th>
+              <th scope="col" class="text-end">Status</th>
+              <th scope="col" class="text-end"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in enrollments %}
+    
+            <tr>
+              <td >{{i.student_name}}</td>
+              <td class="text-end">{{i.course_name}}</td>
+              <td class="text-end">
+                {{i.enroll_date}}
+              </td>
+              <td class="text-end">
+                {% if i.status == False %}
+                <a href="{% url 'comstatus' i.id %}"><button class=" btn btn-secondary">Incomplete</button></a>
+                {% else %}
+                <button class=" btn btn-warning">Complete</button>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <a href="{% url 'deleteenroll' i.id %}"><button type="submit" class="btn btn-icon btn-link btn-danger op-8 btn "><i class="fas fa-times-circle fs-4"></i></button></a>
+    
+                {% if i.status == True %}
+                {% if i.email_status == False %}
+                
+                <a href="{% url 'email' i.id %}"><button type="submit" class="btn btn-icon btn-link op-8 me-2 "><i class="far fa-envelope fs-4"></i></button></a>
+                {% else %}
+                <button type="submit" class="btn btn-secondary">Email sent</button>
+                {% endif %}
+                
+                <a href="{% url 'homeview' i.id %}"><button type="submit" class="btn btn-icon btn-link btn-success op-8"><i class="fas fa-download fs-4"></i></button></a>
+    
+                {% else %}
+    
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  
+    {% else %}
+      <p>Please select a course from the sidebar to view enrollments.</p>
+    {% endif %}
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="si">
+    <h3>Courses</h3>
+    {% for i in course_name %}
+      <a href="{% url 'enrollview' i.id %}">
+        <button type="button">{{ i.course_name }}</button>
+      </a>
+    {% endfor %}
+  </div>
+
+</div>
+
+{% endblock content %}

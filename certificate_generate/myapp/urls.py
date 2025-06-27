@@ -33,8 +33,10 @@ urlpatterns = [
     path('studentinput/',studentinput,name='studentinput'),
     path('email/<int:id>/', email, name='email'),
     path('enrollinput/', enrollinput, name='enrollinput'),
-    
-    
+    path('enrollview/', enrollview, name='enrollview'),
+    path('enrollview/<int:id>/', enrollview, name='enrollview'),
+    path('complete_status/<int:id>/',complete_all_status, name='complete_all_status'),
+ 
 
 
    
