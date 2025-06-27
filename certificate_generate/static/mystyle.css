@@ -84,9 +84,11 @@ img{
 }
 .logoname{
     position:absolute;
-    left:29%;
-    top:30%;
+    left:10%;
+    top:16%;
+    font-size:28px;
     color:white;
+    font-weight: bold;
 }
 .title{
     color: blue;

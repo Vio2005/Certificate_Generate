@@ -226,8 +226,9 @@ def tableexample(request):
 
 
 def deleteenroll(request,id):
-    page_obj=Enrollment.objects.filter(id=id).delete()
-    return redirect('/enrolllist')
+    page_obj=Enrollment.objects.get(id=id)
+    page_obj.delete()
+    return redirect('enrollview',id=page_obj.course_name.id)
 
 def comstatus(request,id):
     enroll = Enrollment.objects.get(id=id)

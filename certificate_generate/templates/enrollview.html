@@ -14,11 +14,11 @@
   }
 
   .si {
-    width: 200px;
+
     background-color: #f8f9fa;
     padding: 15px;
     border-left: 2px solid #ddd;
-    position: sticky;
+    
     top: 20px;
   }
 
@@ -55,15 +55,31 @@
     Enroll Student
   </button></a>
 
-<div class="abc">
+
 
   <!-- MAIN CONTENT -->
-  <div class="ab">
+   
+        
+   <div class="row">
+    <div class="col-md-10">
+
+        <div class="card card-round">        
+  
     {% if course %}
-      <h2>Students enrolled in {{ course.course_name }}</h2>
-      <a href="{% url 'complete_all_status' course.id %}" class="btn btn-success mb-3">
-        Change All to Complete
+     
+    <div class="card-header">
+          <div class="card-head-row card-tools-still-right">
+            <div class="card-title">
+            
+      Students enrolled in {{ course.course_name }}</div>
+      </div>
+      </div>
+      <div class="ms-3 mt-2">
+      <a href="{% url 'complete_all_status' course.id %}" >
+        <button type="button" class="btn btn-success mb-3">Change All to Complete</button>
+        
       </a>
+      </div>
       <div class="table-responsive">
         <!-- Projects table -->
         <table class="table align-items-center mb-0">
@@ -114,15 +130,25 @@
           </tbody>
         </table>
       </div>
+      
   
     {% else %}
-      <p>Please select a course from the sidebar to view enrollments.</p>
+    
+          <div class="m-3">Please select a course from the sidebar to view enrollments.</div>
+      
     {% endif %}
   </div>
+      </div>
 
   <!-- SIDEBAR -->
-  <div class="si">
-    <h3>Courses</h3>
+ <div class="col-md-2">
+      <div class="card card-round">
+        <div class="card-header">
+          <div class="card-head-row card-tools-still-right">
+            <div class="card-title">Courses</div>
+            </div>
+          </div>
+    <div class="card-body p-0 si">
     {% for i in course_name %}
       <a href="{% url 'enrollview' i.id %}">
         <button type="button">{{ i.course_name }}</button>
@@ -130,6 +156,8 @@
     {% endfor %}
   </div>
 
+</div>
+</div>
 </div>
 
 {% endblock content %}
