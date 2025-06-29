@@ -67,15 +67,28 @@ img{
 .print{
     position:absolute;
     top:10px;
+    left:100px;
+    padding: 8px;
+    background-color: rgb(110, 230, 160);
+    border-style: none;
+    border-radius: 5px;
+    width:70px;
+    height:35px;
+    color:white;
+}
+.back{
+    position:absolute;
+    top:10px;
     left:20px;
     padding: 8px;
     background-color: skyblue;
     border-style: none;
     border-radius: 5px;
-    width:60px;
-    height:30px;
+    width:70px;
+    height:35px;
     color:white;
 }
+
 .riglogo{
     width:80px;
     height:80px;

@@ -45,6 +45,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.bootstrap5.css">
     <link rel="stylesheet" href="{% static 'mystyle.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
     
 
   </head>
@@ -86,87 +87,54 @@
               
               <li class="nav-item">
                 <a href="{% url 'courselist' %}">
-                  <i class="fas fa-layer-group"></i>
+                  <i class="fas fa-book"></i>
                   <p>Courses</p>
                   
                 </a>
                 </li>
-                <div class="collapse" id="base">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="{% url 'createcourse' %}">
-                        <span class="sub-item">Create Course</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="{% url 'courselist' %}">
-                        <span class="sub-item">View Courses</span>
-                      </a>
-                    </li>
+                <li class="nav-item">
+                  <a href="{% url 'studentlist' %}">
+                    <i class="fas fa-users"></i>
+                    <p>Student</p>
                     
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                  <i class="fas fa-th-list"></i>
-                  <p>Student</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="sidebarLayouts">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="{% url 'createstudent' %}">
-                        <span class="sub-item">Add Student</span>
-                      </a>
+                  </a>
+                  </li>
+                
+                  <li class="nav-item">
+                    <a href="{% url 'trainerlist' %}">
+                      <i class="fas fa-user-check"></i>
+                      <p>Trainer</p>
+                      
+                    </a>
                     </li>
-                    <li>
-                      <a href="{% url 'studentinput' %}">
-                        <span class="sub-item">Student File Input</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="{% url 'studentlist' %}">
-                        <span class="sub-item">View Student</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              
+             
                 <li class="nav-item">
                   <a href="{% url 'enrollview' %}">
-                    <i class="fas fa-home"></i>
+                    <i class="fas fa-list-ul"></i>
                     <p>Enrollment</p>
                     
                   </a>
                   </li>
+                  <li class="nav-item">
+                    <a href="{% url 'history' %}">
+                      <i class="fas fa-clipboard-list"></i>
+                      <p>History</p>
+                      
+                    </a>
+                    </li>
+
+                
              
-              <li class="nav-item">
-                <a href="{% url 'trainerlist' %}">
-                  <i class="fas fa-map-marker-alt"></i>
-                  <p>Trainer</p>
-                  
-                </a>
-                </li>
-               
-             
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#tables">
-                  <i class="fas fa-table"></i>
-                  <p>Log out</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="tables">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="{% url 'logout' %}">
-                        <span class="sub-item">Log out</span>
-                      </a>
+              
+                <li class="nav-item">
+                  <a href="{% url 'logout' %}" onclick="return confirm('Do you want to logout?')">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <p>Log out</p>
                     
-                  </ul>
-                </div>
-              </li>
+                  </a>
+                  </li>
+             
+              
               <!--
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#charts">
@@ -648,16 +616,16 @@
           <!-- End Navbar -->
         </div>
 
-        <div class="container">
+        <div class="container"  style="background-color: rgb(238, 241, 245);">
           <div class="page-inner">
             
-            <div class="page-category">
+            
               {% block content %}
               
               <!--Inner page content goes here-->
               {% endblock content %}
 
-            </div>
+            
           </div>
         </div>
 
@@ -773,46 +741,16 @@
        var printCounter = 0;
  
  new DataTable('#example', {
-     caption: "A fictional company's staff table.",
-     layout: {
-         topStart: {
-             buttons: [
-                {
-                    extend: 'copy',
-                    className: 'btn btn-secondary me-2'
-                },
-                 {
-                     extend: 'excel',
-                     className: 'btn btn-success',
-                     messageTop:
-                         'The information in this table is copyright to Sirius Cybernetics Corp.'
-                 },
-                 {
-                     extend: 'pdf',
-                     className: 'btn btn-danger',
-                     messageBottom: null
-                 },
-                 {
-                     extend: 'print',
-                     className: 'btn btn-primary',
-                     messageTop: function () {
-                         printCounter++;
-  
-                         if (printCounter === 1) {
-                             return 'This is the first time you have printed this document.';
-                         }
-                         else {
-                             return (
-                                 'You have printed this document ' + printCounter + ' times'
-                             );
-                         }
-                     },
-                     messageBottom: null
-                 }
-             ]
-         }
-     }
+     
+     
  }); 
 </script>
+<script>
+  document.getElementById('logout-link').addEventListener('click', function(event) {
+    if (!confirm('Do you want to logout?')) {
+      event.preventDefault();
+    }
+  });
+  </script>
   </body>
 </html>

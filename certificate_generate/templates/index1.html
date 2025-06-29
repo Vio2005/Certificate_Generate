@@ -6,6 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Certificate</title>
   <link rel="stylesheet" type="text/css" href="{% static 'mystyle.css' %}" />
+  <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+    <script>
+      WebFont.load({
+        google: { families: ["Public Sans:300,400,500,600,700"] },
+        custom: {
+          families: [
+            "Font Awesome 5 Solid",
+            "Font Awesome 5 Regular",
+            "Font Awesome 5 Brands",
+            "simple-line-icons",
+          ],
+          urls: ["{% static 'assets/css/fonts.min.css' %}"],
+        },
+        active: function () {
+          sessionStorage.fonts = true;
+        },
+      });
+    </script>
+
   
   <style>
     @media print {
@@ -28,13 +47,17 @@
     <p class="stuname">{{ enroll.student_name }}</p>
     <p class="having">Having successfully completed the following course</p>
     <p class="course_name">{{ enroll.course_name }}</p> 
-    <p class="date">{{ enroll.enroll_date }} - {{ enroll.end_date }}</p>
-    <p class="rig">RIG/{{ enroll.course_name.short_name }}/2500039193</p> 
+    <p class="date">{{ enroll.start_date }} - {{ enroll.end_date }}</p>
+    <p class="rig">RIG/{{ enroll.course_name.short_name }}/{{enroll.enroll_id}}</p> 
     <p class="sdate">{{ enroll.email_date }}</p>
 
   </div>
 
-  <button class="print" onclick="printcertificate()">Print</button>
+  <button type="button" class="back" onclick="history.back()">
+    <i class="fas fa-reply">&nbsp;Back</i> 
+  </button>
+  <button class="print" onclick="printcertificate()"><i class="far fa-file">&nbsp;Print</i></button>
+  
 
   <script>
     function printcertificate() {

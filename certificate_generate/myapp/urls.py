@@ -36,6 +36,11 @@ urlpatterns = [
     path('enrollview/', enrollview, name='enrollview'),
     path('enrollview/<int:id>/', enrollview, name='enrollview'),
     path('complete_status/<int:id>/',complete_all_status, name='complete_all_status'),
+    path('deletecoursebtn/<int:id>/',deletecoursebtn, name='deletecoursebtn'),
+    path('deletetrainerhome/<int:id>/',deletetrainerhome, name='deletetrainerhome'),
+    path('enroll_single_student/',enroll_single_student, name='enroll_single_student'),
+    path('history/', historyview, name='history'),
+
  
 
 

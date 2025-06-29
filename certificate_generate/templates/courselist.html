@@ -28,6 +28,14 @@
 </div>
 
 <!--End Modal-->
+<div class="card card-round">
+  <div class="card-header">
+    <div class="card-head-row card-tools-still-right">
+      <div class="card-title">Course List</div>
+      </div>
+    </div>
+  
+  <div class="card-body p-0">
 
 <div class="table-responsive">
     <!-- Projects table -->
@@ -36,7 +44,6 @@
         <tr>
           <th scope="col" >Course</th>
           <th scope="col" >Short Name</th>
-          <th scope="col" class="text-end">Duration</th>
           <th scope="col" class="text-end">Trainer</th>
           <th scope="col" class="text-end"></th>
         </tr>
@@ -46,17 +53,23 @@
         <tr>
           <td >{{i.course_name}}</td>
           <td >{{i.short_name}}</td>
-          <td class="text-end">{{i.duration}} months</td>
           <td class="text-end">{{i.trainer_name}}</td>
           <td class="text-end">
-            <a href="{% url 'deletecourse' i.id %}"><button type="submit" class="btn btn-danger">Delete</button></a>
-            <a href="{% url 'updatecourse' i.id %}"><button type="submit" class="btn btn-success">Update</button></a>
+            <a href="{% url 'updatecourse' i.id %}"><button type="submit" class="btn btn-icon btn-link op-8 me-1">
+              <i class="fas fa-edit fs-4"></i>
+            </button></a>
+            <a href="{% url 'deletecourse' i.id %}"><button type="submit" class="btn btn-icon btn-link btn-danger op-8">
+              <i class="fas fa-trash fs-4"></i>
+            </button></a>
+           
           </td>
         </tr>
         {% endfor %}
        
       </tbody>
     </table>
+  </div>
+  </div>
   </div>
   <!-- <div class="pagination">
     <span class="step-links">
@@ -75,42 +88,47 @@
         {% endif %}
     </span>
 </div> -->
-<nav aria-label="Page navigation example" class="pt-3">
-    <ul class="pagination">
-      
-      {% if page_obj.has_previous %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-          <span aria-hidden="true">&laquo; Previous</span>
+<nav aria-label="Page navigation" class="pt-3">
+  <ul class="inline-flex items-center -space-x-px text-sm">
+
+    {% if page_obj.has_previous %}
+      <li>
+        <a href="?page={{ trainer_obj.previous_page_number }}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">
+          &laquo; Previous
         </a>
       </li>
-      {% else %}
-      <li class="page-item disabled">
-        <span class="page-link" aria-label="Previous">&laquo; Previous</span>
-      </li>
-      {% endif %}
-  
-      <!-- Current page as active -->
-      <li class="page-item active" aria-current="page">
-        <span class="page-link">
-          {{ page_obj.number }}
+    {% else %}
+      <li>
+        <span class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-gray-100 border border-gray-300 rounded-l-lg cursor-not-allowed">
+          &laquo; Previous
         </span>
       </li>
-  
-      {% if page_obj.has_next %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-          <span aria-hidden="true">Next &raquo;</span>
+    {% endif %}
+
+    <!-- Current page -->
+    <li>
+      <span class="px-3 py-2 leading-tight text-white bg-blue-600 border border-blue-600">
+        {{ page_obj.number }}
+      </span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li>
+        <a href="?page={{ trainer_obj.next_page_number }}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">
+          Next &raquo;
         </a>
       </li>
-      {% else %}
-      <li class="page-item disabled">
-        <span class="page-link" aria-label="Next">Next &raquo;</span>
+    {% else %}
+      <li>
+        <span class="px-3 py-2 leading-tight text-gray-400 bg-gray-100 border border-gray-300 rounded-r-lg cursor-not-allowed">
+          Next &raquo;
+        </span>
       </li>
-      {% endif %}
-  
-    </ul>
-  </nav>
+    {% endif %}
+
+  </ul>
+</nav>
+
   
    
    

@@ -47,7 +47,7 @@ def courselist(request):
            
             return HttpResponse('Error')
     course=Course.objects.all()
-    paginator = Paginator(course, 3) 
+    paginator = Paginator(course, 5) 
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -57,6 +57,8 @@ def courselist(request):
 def deletecourse(request,id):
     page_obj=Course.objects.filter(id=id).delete()
     return redirect('/courselist')
+
+
 
 def updatecourse(request,id):
     course = Course.objects.get(id=id)
@@ -117,10 +119,11 @@ def updatestudent(request,id):
     context={"student":student,"obj":obj}
     return render(request,'updatestudent.html',context)
 
-def detailstudent(request,id):
-    student=Student.objects.filter(id=id)
-    context={"student":student}
-    return render(request,'studentdetail.html',context)
+def detailstudent(request, id):
+    student = Student.objects.get(id=id)
+    context = {"student": student}
+    return render(request, 'studentdetail.html', context)
+
 
 
 
@@ -269,7 +272,7 @@ def trainerlist(request):
            
             return HttpResponse('Error')
     trainer=Trainer.objects.all()
-    paginator = Paginator(trainer, 3) 
+    paginator = Paginator(trainer, 5) 
 
     page_number = request.GET.get("page")
     trainer_obj = paginator.get_page(page_number)
@@ -279,6 +282,10 @@ def trainerlist(request):
 def deletetrainer(request,id):
     trainer_obj=Trainer.objects.filter(id=id).delete()
     return redirect('/trainerlist')
+
+def deletetrainerhome(request,id):
+    trainer_obj=Trainer.objects.filter(id=id).delete()
+    return redirect('/indexview')
 
 def updatetrainer(request,id):
     obj = Trainer.objects.get(id=id)
@@ -330,18 +337,19 @@ def studentinput(request):
     return render(request,'studentinput.html')
 
 def enrollinput(request):
-    course = Course.objects.all()
+    courses = Course.objects.all()
 
     if request.method == "POST":
         uploaded_file = request.FILES.get('list')
         selected_course_name = request.POST.get('course')
+        start_date = request.POST.get('start_date')  # ✅ read from form
 
         course = Course.objects.get(course_name=selected_course_name)
 
         data = pandas.read_excel(uploaded_file)
         for index, row in data.iterrows():
-            student_name = row['name'].strip()
-            email = row['email'].strip().lower()
+            student_name = str(row['name']).strip()
+            email = str(row['email']).strip().lower()
             phone = str(row['phone']).strip()
 
             student, created = Student.objects.get_or_create(
@@ -359,14 +367,13 @@ def enrollinput(request):
 
             Enrollment.objects.create(
                 student_name=student,
-                course_name=course
+                course_name=course,
+                start_date=start_date  # ✅ use form's start_date for all
             )
 
         return redirect('/enrollinput')
 
-    # Important: return context in GET request
-    return render(request, 'enrollinput.html', {'course': course})
-
+    return render(request, 'enrollinput.html', {'course': courses})
 
 
 
@@ -422,11 +429,7 @@ You have successfully completed the course: {enroll.course_name.course_name}
 
 Warm regards,  
 RIG Admin  
-Training Coordinator  
-Realistic Infotech Group  
-Consulting / Software Solutions / IT Training  
-www.rig-info.com  
-09256675642, 09953933826
+
 """,
         from_email=settings.EMAIL_HOST_USER,
         to=[receiver_email],
@@ -437,23 +440,37 @@ www.rig-info.com
     # Step 8: Cleanup temporary HTML
     os.remove(html_path)
 
-    return redirect('enrolllist')
+    return redirect('enrollview',id=enroll.course_name.id)
 
-def enrollview(request,id=None):
+def enrollview(request, id=None):
     course_name = Course.objects.all()
-
     course = None
     enrollments = None
 
     if id is not None:
         course = Course.objects.get(id=id)
-        enrollments = Enrollment.objects.filter(course_name=course)
+        enrollments = Enrollment.objects.filter(course_name=course, email_status=False)
 
     return render(request, 'enrollview.html', {
         'course_name': course_name,
         'course': course,
         'enrollments': enrollments
     })
+
+def historyview(request):
+    enrollments = Enrollment.objects.filter(email_status=True)
+
+    paginator = Paginator(enrollments, 5)  # Show 5 enrollments per page
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'enrollments': enrollments,
+        'page_obj': page_obj,
+    }
+    return render(request, 'history.html', context)
+
 def course_enrollments(request, id):
     course = Course.objects.get(id=id)
     enrollments = Enrollment.objects.filter(course_name=course)
@@ -461,3 +478,70 @@ def course_enrollments(request, id):
         'course': course,
         'enrollments': enrollments
     })
+
+def deletecoursebtn(request,id):
+    course_name=Course.objects.filter(id=id).delete()
+    return redirect("/enrollview")
+
+def enroll_single_student(request):
+    courses = Course.objects.all()
+
+    if request.method == "POST":
+        student_name = request.POST.get('student_name').strip()
+        email = request.POST.get('email').strip().lower()
+        phone = request.POST.get('phone').strip()
+        selected_course_name = request.POST.get('course')
+        start_date = request.POST.get('start_date')
+
+        try:
+            course = Course.objects.get(course_name=selected_course_name)
+        except Course.DoesNotExist:
+            return render(request, 'enroll_single.html', {
+                'course': courses,
+                'error': 'Selected course does not exist.'
+            })
+
+        # ✅ Always get or create Student by email
+        student, created = Student.objects.get_or_create(
+            email=email,
+            defaults={
+                'student_name': student_name,
+                'phone': phone
+            }
+        )
+        if not created:
+            student.student_name = student_name
+            student.phone = phone
+            student.save()
+
+        # ✅ Check for existing Enrollment by student (via email) and course
+        existing_enrollment = Enrollment.objects.filter(
+            student_name=student,
+            course_name=course
+        ).first()
+
+        if existing_enrollment:
+            return render(request, 'enroll_single.html', {
+                'course': courses,
+                'error': 'This student (by email) is already enrolled in the selected course.'
+            })
+
+        # ✅ Create new Enrollment
+        Enrollment.objects.create(
+            student_name=student,
+            course_name=course,
+            start_date=start_date
+        )
+
+        return redirect('enrollview', id=course.id)
+
+    return render(request, 'enroll_single.html', {'course': courses})
+
+def history(request):
+    enroll=Enrollment.objects.all()
+    paginator = Paginator(enroll, 10) 
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    context={'enroll':enroll,'page_obj':page_obj}
+    return render(request,'history.html',context)

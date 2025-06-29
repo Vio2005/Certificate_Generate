@@ -15,11 +15,11 @@
 
   .si {
 
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-left: 2px solid #ddd;
     
-    top: 20px;
+    padding: 15px;
+    
+    
+    top: 5px;
   }
 
   .si h3 {
@@ -35,7 +35,7 @@
   .si button {
     display: block;
     width: 100%;
-    margin: 5px 0;
+    
     padding: 8px 10px;
     font-size: 14px;
     background-color: #007bff;
@@ -49,10 +49,17 @@
   .si button:hover {
     background-color: #0056b3;
   }
+  .but{
+    width:120px;
+    
+  }
 </style>
 
 <a href="{% url 'enrollinput' %}"><button type="button" class="btn btn-primary" style="margin-bottom: 20px;">
-    Enroll Student
+    Enroll Student Excel
+  </button></a>
+  <a href="{% url 'enroll_single_student' %}"><button type="button" class="btn btn-primary" style="margin-bottom: 20px;">
+    Enroll Student Single
   </button></a>
 
 
@@ -88,6 +95,7 @@
               <th scope="col" >Student</th>
               <th scope="col" class="text-end">Course</th>
               <th scope="col" class="text-end">Enroll Date</th>
+              <th scope="col" class="text-end">Start Date</th>
               <th scope="col" class="text-end">Status</th>
               <th scope="col" class="text-end"></th>
             </tr>
@@ -96,10 +104,13 @@
             {% for i in enrollments %}
     
             <tr>
-              <td >{{i.student_name}}</td>
+              <td><a href="{% url 'detailstudent' i.student_name.id %}" style="color:black;">{{ i.student_name }}</a></td>
               <td class="text-end">{{i.course_name}}</td>
               <td class="text-end">
                 {{i.enroll_date}}
+              </td>
+              <td class="text-end">
+                {{i.start_date}}
               </td>
               <td class="text-end">
                 {% if i.status == False %}
@@ -109,7 +120,7 @@
                 {% endif %}
               </td>
               <td class="text-end">
-                <a href="{% url 'deleteenroll' i.id %}"><button type="submit" class="btn btn-icon btn-link btn-danger op-8 btn "><i class="fas fa-times-circle fs-4"></i></button></a>
+                <a href="{% url 'deleteenroll' i.id %}"><button type="submit" class="btn btn-icon btn-link btn-danger op-8 btn "><i class="fas fa-trash fs-4"></i></button></a>
     
                 {% if i.status == True %}
                 {% if i.email_status == False %}
@@ -148,13 +159,27 @@
             <div class="card-title">Courses</div>
             </div>
           </div>
-    <div class="card-body p-0 si">
-    {% for i in course_name %}
-      <a href="{% url 'enrollview' i.id %}">
-        <button type="button">{{ i.course_name }}</button>
-      </a>
-    {% endfor %}
+    <div class="card-body p-0 ">
+      <table align="center">
+       
+      
+        {% for i in course_name %}
+        <tr>
+        <td >
+        <div class="mt-2 mb-1" >
+          <a href="{% url 'enrollview' i.id %}">
+            <button type="button" class="but btn btn-primary">{{ i.course_name }}</button>
+          </a>
+        </div>
+      </td>
+     
+    </tr>
+        {% endfor %}
+  
+  
+  </table>
   </div>
+
 
 </div>
 </div>

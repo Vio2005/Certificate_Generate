@@ -1,0 +1,89 @@
+{% extends 'starter-template.html' %}
+{% block content %}
+
+<div class="card card-round">
+    <div class="card-header">
+      <div class="card-head-row card-tools-still-right">
+        <div class="card-title">History</div>
+        </div>
+      </div>
+    
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <!-- Projects table -->
+        <table class="table align-items-center mb-0">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Student Name</th>
+              <th scope="col">Course Name</th>
+              <th scope="col" class="text-end">Start Date</th>
+              <th scope="col" class="text-end">End Date</th>
+              <th scope="col" class="text-end"></th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in enrollments %}
+            <tr>
+              <td>
+                
+                {{i.student_name}}
+              </td>
+              <td >{{i.course_name}}</td>
+              <td class="text-end">{{i.start_date}}</td>
+              <td class="text-end">{{i.end_date}}</td>
+              <td class="text-end">
+                <a href="{% url 'homeview' i.id %}"><button type="submit" class="btn btn-icon btn-link btn-success op-8"><i class="fas fa-download fs-4"></i></button></a>
+              </td>
+              
+            </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+    </div>
+      </div>
+    </div>
+
+    <nav aria-label="Page navigation" class="pt-3">
+      <ul class="inline-flex items-center -space-x-px text-sm">
+    
+        {% if page_obj.has_previous %}
+          <li>
+            <a href="?page={{ trainer_obj.previous_page_number }}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">
+              &laquo; Previous
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <span class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-gray-100 border border-gray-300 rounded-l-lg cursor-not-allowed">
+              &laquo; Previous
+            </span>
+          </li>
+        {% endif %}
+    
+        <!-- Current page -->
+        <li>
+          <span class="px-3 py-2 leading-tight text-white bg-blue-600 border border-blue-600">
+            {{ page_obj.number }}
+          </span>
+        </li>
+    
+        {% if page_obj.has_next %}
+          <li>
+            <a href="?page={{ trainer_obj.next_page_number }}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">
+              Next &raquo;
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <span class="px-3 py-2 leading-tight text-gray-400 bg-gray-100 border border-gray-300 rounded-r-lg cursor-not-allowed">
+              Next &raquo;
+            </span>
+          </li>
+        {% endif %}
+    
+      </ul>
+    </nav>
+
+{% endblock content %}

@@ -1,0 +1,54 @@
+{% extends 'starter-template.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-center">
+  <form method="post" class="w-100" style="max-width: 400px;">
+    {% csrf_token %}
+    <div class="card shadow">
+      <div class="card-header">
+        <div class="card-title mb-0">Enroll Form</div>
+      </div>
+      <div class="card-body">
+        
+        <div class="mb-3">
+          <label for="student_name" class="form-label">Student Name</label>
+          <input type="text" id="student_name" name="student_name" class="form-control" placeholder="Enter student name" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="form-label">Phone</label>
+          <input type="text" id="phone" name="phone" class="form-control" placeholder="Enter phone number">
+        </div>
+
+        <div class="mb-3">
+          <label for="course" class="form-label">Select Course</label>
+          <select id="course" name="course" class="form-select" required>
+            <option value="" disabled selected>Select a course</option>
+            {% for c in course %}
+              <option value="{{ c.course_name }}">{{ c.course_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="startDate" class="form-label">Select Start Date</label>
+          <input type="date" name="start_date" id="startDate" class="form-control" required>
+        </div>
+
+        <div class="mt-2">
+          <button type="submit" class="btn btn-primary">Save</button>
+        
+        <button type="button" class="btn btn-danger " onclick="history.back()">
+          <i class="fas fa-times">&nbsp;Cancel</i> 
+        </button>
+      </div>
+      </div>
+    </div>
+  </form>
+</div> 
+
+{% endblock content %}

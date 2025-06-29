@@ -1,8 +1,39 @@
 {% extends 'starter-template.html' %}
+
 {% block content %}
-{% for i in student %}
-<p>Name:{{i.student_name}}</p>
-<p>Email:{{i.email}}</p>
-<p>Phone:{{i.phone}}</p>
-{% endfor %}
+
+<div class="d-flex justify-content-center my-4" style="font-size: 1.25rem;">
+  <div class="card shadow" style="max-width: 400px; width: 100%; font-size: 1.1rem;">
+    <div class="card-body">
+      <table class="table table-borderless mb-0">
+        <tbody>
+          <tr class="align-middle">
+            <td class="fw-bold py-3 px-4">Name:</td>
+            <td class="py-3 px-4">{{ student.student_name }}</td>
+          </tr>
+          <tr class="align-middle">
+            <td class="fw-bold py-3 px-4">Email:</td>
+            <td class="py-3 px-4">{{ student.email }}</td>
+          </tr>
+          <tr class="align-middle">
+            <td class="fw-bold py-3 px-4">Phone:</td>
+            <td class="py-3 px-4">{{ student.phone }}</td>
+          </tr>
+          <tr class="align-middle">
+            <td class="py-3 px-4">
+                <button type="button" class="btn btn-primary" onclick="history.back()">
+                    <i class="fas fa-reply">&nbsp;Back</i> 
+                  </button>
+                  <a href="{% url 'updatestudent' student.id %}"><button type="button" class="btn btn-success" >
+                    <i class="fas fa-edit">&nbsp;Edit</i> 
+                  </button></a>
+            </td>
+            <td class="py-3 px-4"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}
