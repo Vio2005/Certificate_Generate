@@ -37,9 +37,11 @@ urlpatterns = [
     path('enrollview/<int:id>/', enrollview, name='enrollview'),
     path('complete_status/<int:id>/',complete_all_status, name='complete_all_status'),
     path('deletecoursebtn/<int:id>/',deletecoursebtn, name='deletecoursebtn'),
+    path('email_all/<int:course_id>/',email_all, name='email_all'),
     path('deletetrainerhome/<int:id>/',deletetrainerhome, name='deletetrainerhome'),
     path('enroll_single_student/',enroll_single_student, name='enroll_single_student'),
     path('history/', historyview, name='history'),
+    path('myaccount/', myaccount, name='myaccount'),
 
  
 

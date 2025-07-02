@@ -116,6 +116,13 @@
                   </a>
                   </li>
                   <li class="nav-item">
+                    <a href="{% url 'myaccount' %}">
+                      <i class="fas fa-user-circle"></i>
+                      <p>My account</p>
+                      
+                    </a>
+                    </li>
+                  <li class="nav-item">
                     <a href="{% url 'history' %}">
                       <i class="fas fa-clipboard-list"></i>
                       <p>History</p>
@@ -127,7 +134,7 @@
              
               
                 <li class="nav-item">
-                  <a href="{% url 'logout' %}" onclick="return confirm('Do you want to logout?')">
+                  <a href="{% url 'logout' %}" id="logout-link">
                     <i class="fas fa-sign-out-alt"></i>
                     <p>Log out</p>
                     
@@ -752,5 +759,12 @@
     }
   });
   </script>
+  <script>
+    document.getElementById('delete-link').addEventListener('click', function(event) {
+      if (!confirm('Do you want to delete?')) {
+        event.preventDefault();
+      }
+    });
+    </script>
   </body>
 </html>

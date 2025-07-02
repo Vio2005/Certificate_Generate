@@ -12,11 +12,14 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from html2image import Html2Image
+from django.db.models import Count, Q
+
 import os
 
 # Create your views here.
 def homeview(request,id):
     enroll = Enrollment.objects.select_related('course_name').get(id=id)
+    
     context={"enroll":enroll}
     return render(request,'index1.html',context)
 
@@ -163,6 +166,7 @@ def register_view(request):
         else:
             usr=User.objects.create_user(username=username,email=email,first_name=firstname,last_name=lastname)
             usr.set_password(password)
+            usr.is_superuser=True
             usr.is_staff=True
             usr.save()
 
@@ -206,16 +210,37 @@ class LoginRequire(object):
             return redirect('/login')
         return super().dispatch(request,*arg,**kwargs)
     
-class IndexView(LoginRequire,SuperUser,View):
-    def get(self,request):
-        student=Student.objects.count()
-        trainer=Trainer.objects.count()
-        course=Course.objects.count()
+class IndexView(LoginRequire, SuperUser, View):
+    def get(self, request):
+        student = Student.objects.count()
+        trainer = Trainer.objects.count()
+        course = Course.objects.count()
+
+        # Count total incomplete enrollments
         active_enrollments = Enrollment.objects.filter(status=False).count()
-        courselist=Course.objects.all()
-        trainer_obj=Trainer.objects.all()
-        context={"student":student,"trainer":trainer,"course":course,"active_enrollments":active_enrollments,"courselist":courselist,"trainer_obj":trainer_obj}
-        return render(request,'homepage.html',context)
+
+        # Filter courses that have at least one incomplete enrollment and annotate them
+        courses_with_incomplete = Course.objects.filter(
+            enrollment__status=False
+        ).annotate(
+            incomplete_count=Count(
+                'enrollment',
+                filter=Q(enrollment__status=False)
+            )
+        ).distinct()
+
+        trainer_obj = Trainer.objects.all()
+
+        context = {
+            "student": student,
+            "trainer": trainer,
+            "course": course,
+            "active_enrollments": active_enrollments,
+            "courselist": courses_with_incomplete,
+            "trainer_obj": trainer_obj
+        }
+
+        return render(request, 'homepage.html', context)
 
 def index1(request):
     return render(request,'starter-template.html')
@@ -342,7 +367,7 @@ def enrollinput(request):
     if request.method == "POST":
         uploaded_file = request.FILES.get('list')
         selected_course_name = request.POST.get('course')
-        start_date = request.POST.get('start_date')  # ✅ read from form
+        start_date = request.POST.get('start_date')
 
         course = Course.objects.get(course_name=selected_course_name)
 
@@ -352,6 +377,7 @@ def enrollinput(request):
             email = str(row['email']).strip().lower()
             phone = str(row['phone']).strip()
 
+            # ✅ Get or create Student by email
             student, created = Student.objects.get_or_create(
                 email=email,
                 defaults={
@@ -365,23 +391,33 @@ def enrollinput(request):
                 student.phone = phone
                 student.save()
 
+            # ✅ Check if enrollment already exists for this student and course
+            existing_enrollment = Enrollment.objects.filter(
+                student_name=student,
+                course_name=course
+            ).first()
+
+            if existing_enrollment:
+                # ✅ Skip creating duplicate enrollment
+                continue
+
+            # ✅ Create new Enrollment
             Enrollment.objects.create(
                 student_name=student,
                 course_name=course,
-                start_date=start_date  # ✅ use form's start_date for all
+                start_date=start_date
             )
 
-        return redirect('/enrollinput')
+        return redirect('enrollview', id=course.id)
 
     return render(request, 'enrollinput.html', {'course': courses})
-
 
 
 def email(request, id):
     # Step 1: Update email_status and email_date
     Enrollment.objects.filter(id=id).update(
         email_status=True,
-        email_date=timezone.now()
+        email_date=timezone.now().date()
     )
 
     # Step 2: Fetch the updated Enrollment object (with related Course and Student)
@@ -441,6 +477,89 @@ RIG Admin
     os.remove(html_path)
 
     return redirect('enrollview',id=enroll.course_name.id)
+
+
+def email_all(request, course_id):
+    # Step 1: Get all enrollments for this course with status=True and email_status=False
+    enrollments = Enrollment.objects.filter(
+        course_name_id=course_id,
+        status=True,
+        email_status=False
+    ).select_related('course_name', 'student_name')
+
+    if not enrollments.exists():
+        # No eligible enrollments
+        return redirect('enrollview', id=course_id)
+
+    # Step 2: Build absolute domain for static files
+    domain = request.build_absolute_uri('/')[:-1]
+
+    # Step 3: Prepare output folder for certificates
+    output_dir = os.path.join(settings.MEDIA_ROOT, 'certificates')
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Step 4: Set up HTML to Image converter
+    hti = Html2Image()
+    hti.output_path = output_dir
+
+    # Step 5: Loop through each enrollment and send email
+    for enroll in enrollments:
+        student = enroll.student_name
+        receiver_email = student.email
+
+        enroll.email_status = True
+        enroll.email_date = timezone.now().date()
+        enroll.save()
+
+        # Render certificate HTML
+        html_content = render_to_string('index2.html', {
+            'enroll': enroll,
+            'domain': domain,
+        })
+
+        # Save HTML to temporary file
+        html_path = os.path.join(settings.BASE_DIR, 'temp_certificate.html')
+        with open(html_path, 'w', encoding='utf-8') as f:
+            f.write(html_content)
+
+        # Generate certificate image
+        image_name = f'certificate_{student.student_name}_{enroll.id}.jpg'
+        hti.screenshot(
+            html_file=html_path,
+            save_as=image_name,
+            size=(1000, 700)
+        )
+
+        image_path = os.path.join(output_dir, image_name)
+
+        # Send email with attachment
+        email = EmailMessage(
+            subject='Your Certificate',
+            body=f"""
+Dear {student.student_name},
+
+Congratulations! 🎉
+
+You have successfully completed the course: {enroll.course_name.course_name}
+
+Warm regards,  
+RIG Admin
+""",
+            from_email=settings.EMAIL_HOST_USER,
+            to=[receiver_email],
+        )
+        email.attach_file(image_path)
+        email.send()
+
+        # Mark as emailed
+        
+
+        # Cleanup
+        os.remove(html_path)
+
+    return redirect('enrollview', id=course_id)
+
+
 
 def enrollview(request, id=None):
     course_name = Course.objects.all()
@@ -545,3 +664,18 @@ def history(request):
     page_obj = paginator.get_page(page_number)
     context={'enroll':enroll,'page_obj':page_obj}
     return render(request,'history.html',context)
+
+def myaccount(request):
+    user = request.user
+    return render(request, 'myaccount.html', {'user': user})
+
+def courselistview(request):
+    # Only include courses that have at least one incomplete enrollment
+    courses_with_incomplete = Course.objects.filter(
+        status=False
+    ).distinct()
+
+    context = {
+        'courselist': courses_with_incomplete
+    }
+    return render(request, 'your_template.html', context)
