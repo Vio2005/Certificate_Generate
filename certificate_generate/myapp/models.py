@@ -38,6 +38,8 @@ class Enrollment(models.Model):
     email_date = models.DateField(blank=True, null=True)
     status = models.BooleanField(default=False)
     email_status = models.BooleanField(default=False)
+    certificate_image = models.ImageField(upload_to='certificates/', blank=True, null=True)
+
 
     def save(self, *args, **kwargs):
         if not self.enroll_id:

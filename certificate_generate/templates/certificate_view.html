@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Certificate Print</title>
+  <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+
+  <style>
+    @page {
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body * {
+        display: none;
+      }
+
+      .printable-image, .printable-image * {
+        display: block !important;
+        visibility: visible !important;
+      }
+
+      .printable-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .printable-image img {
+        width: 100vw;
+        height: 100vh;
+        object-fit: contain;
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% if enroll.certificate_image %}
+    <div class="printable-image text-center">
+      <img src="{{ enroll.certificate_image.url }}" alt="Certificate" />
+    </div>
+  {% else %}
+    <p class="text-danger text-center mt-5">No certificate image available.</p>
+  {% endif %}
+
+  <div class="text-center mb-3">
+    <button class="btn btn-primary" onclick="window.print()">Print</button>
+    <button class="btn btn-secondary" onclick="history.back()">Back</button>
+  </div>
+</body>
+</html>

@@ -215,6 +215,7 @@ class IndexView(LoginRequire, SuperUser, View):
         student = Student.objects.count()
         trainer = Trainer.objects.count()
         course = Course.objects.count()
+        certificate = Enrollment.objects.filter(email_status=True).count()
 
         # Count total incomplete enrollments
         active_enrollments = Enrollment.objects.filter(status=False).count()
@@ -235,6 +236,7 @@ class IndexView(LoginRequire, SuperUser, View):
             "student": student,
             "trainer": trainer,
             "course": course,
+            "certificate":certificate,
             "active_enrollments": active_enrollments,
             "courselist": courses_with_incomplete,
             "trainer_obj": trainer_obj
@@ -414,36 +416,38 @@ def enrollinput(request):
 
 
 def email(request, id):
-    # Step 1: Update email_status and email_date
+    # 1️⃣ Update email_status and email_date
     Enrollment.objects.filter(id=id).update(
         email_status=True,
-        email_date=timezone.now().date()
+        email_date=timezone.now().date()   # Just the date, no time
     )
 
-    # Step 2: Fetch the updated Enrollment object (with related Course and Student)
+    # 2️⃣ Fetch the updated Enrollment object with related data
     enroll = Enrollment.objects.select_related('course_name', 'student_name').get(id=id)
     student = enroll.student_name
     receiver_email = student.email
 
-    # Step 3: Build absolute domain for loading static files
+    # 3️⃣ Build absolute domain for loading static files in HTML template
     domain = request.build_absolute_uri('/')[:-1]
 
-    # Step 4: Render HTML from template with the single enrollment object
+    # 4️⃣ Render HTML template with enrollment data
     html_content = render_to_string('index2.html', {
         'enroll': enroll,
         'domain': domain,
     })
 
-    # Step 5: Save the HTML content to a temporary file
+    # 5️⃣ Save the rendered HTML to a temporary file
     html_path = os.path.join(settings.BASE_DIR, 'temp_certificate.html')
     with open(html_path, 'w', encoding='utf-8') as f:
         f.write(html_content)
 
-    # Step 6: Convert HTML to Image
+    # 6️⃣ Convert HTML to Image
     hti = Html2Image()
     output_dir = os.path.join(settings.MEDIA_ROOT, 'certificates')
     os.makedirs(output_dir, exist_ok=True)
-    image_name = f'certificate_{student.student_name}.jpg'
+
+    # Ensure unique image name (add enrollment ID)
+    image_name = f'certificate_{student.student_name}_{enroll.id}.jpg'
     hti.output_path = output_dir
     hti.screenshot(
         html_file=html_path,
@@ -451,9 +455,14 @@ def email(request, id):
         size=(1000, 700)
     )
 
-    image_path = os.path.join(output_dir, image_name)
+    # Compute relative path for MEDIA_URL
+    relative_image_path = os.path.join('certificates', image_name)
 
-    # Step 7: Send the email with image attachment
+    # 7️⃣ Save certificate image path to Enrollment
+    enroll.certificate_image = relative_image_path
+    enroll.save()
+
+    # 8️⃣ Send email with the image attached
     email = EmailMessage(
         subject='Your Certificate',
         body=f"""
@@ -464,23 +473,23 @@ Congratulations! 🎉
 You have successfully completed the course: {enroll.course_name.course_name}
 
 Warm regards,  
-RIG Admin  
-
+RIG Admin
 """,
         from_email=settings.EMAIL_HOST_USER,
         to=[receiver_email],
     )
-    email.attach_file(image_path)
+    email.attach_file(os.path.join(settings.MEDIA_ROOT, relative_image_path))
     email.send()
 
-    # Step 8: Cleanup temporary HTML
+    # 9️⃣ Cleanup temporary HTML file
     os.remove(html_path)
 
-    return redirect('enrollview',id=enroll.course_name.id)
+    # 10️⃣ Redirect back to enrollview for that course
+    return redirect('enrollview', id=enroll.course_name.id)
 
 
 def email_all(request, course_id):
-    # Step 1: Get all enrollments for this course with status=True and email_status=False
+    # Step 1: Get all eligible enrollments
     enrollments = Enrollment.objects.filter(
         course_name_id=course_id,
         status=True,
@@ -488,28 +497,21 @@ def email_all(request, course_id):
     ).select_related('course_name', 'student_name')
 
     if not enrollments.exists():
-        # No eligible enrollments
         return redirect('enrollview', id=course_id)
 
-    # Step 2: Build absolute domain for static files
+    # Step 2: Build domain and output path
     domain = request.build_absolute_uri('/')[:-1]
-
-    # Step 3: Prepare output folder for certificates
     output_dir = os.path.join(settings.MEDIA_ROOT, 'certificates')
     os.makedirs(output_dir, exist_ok=True)
 
-    # Step 4: Set up HTML to Image converter
+    # Step 3: Set up Html2Image
     hti = Html2Image()
     hti.output_path = output_dir
 
-    # Step 5: Loop through each enrollment and send email
+    # Step 4: Loop through enrollments
     for enroll in enrollments:
         student = enroll.student_name
         receiver_email = student.email
-
-        enroll.email_status = True
-        enroll.email_date = timezone.now().date()
-        enroll.save()
 
         # Render certificate HTML
         html_content = render_to_string('index2.html', {
@@ -517,12 +519,12 @@ def email_all(request, course_id):
             'domain': domain,
         })
 
-        # Save HTML to temporary file
+        # Save HTML temporarily
         html_path = os.path.join(settings.BASE_DIR, 'temp_certificate.html')
         with open(html_path, 'w', encoding='utf-8') as f:
             f.write(html_content)
 
-        # Generate certificate image
+        # Generate image
         image_name = f'certificate_{student.student_name}_{enroll.id}.jpg'
         hti.screenshot(
             html_file=html_path,
@@ -530,9 +532,17 @@ def email_all(request, course_id):
             size=(1000, 700)
         )
 
-        image_path = os.path.join(output_dir, image_name)
+        # Relative image path for ImageField
+        relative_image_path = os.path.join('certificates', image_name)
+        full_image_path = os.path.join(output_dir, image_name)
 
-        # Send email with attachment
+        # Update enrollment with image and email info
+        enroll.certificate_image = relative_image_path
+        enroll.email_status = True
+        enroll.email_date = timezone.now().date()
+        enroll.save()
+
+        # Send email
         email = EmailMessage(
             subject='Your Certificate',
             body=f"""
@@ -548,13 +558,10 @@ RIG Admin
             from_email=settings.EMAIL_HOST_USER,
             to=[receiver_email],
         )
-        email.attach_file(image_path)
+        email.attach_file(full_image_path)
         email.send()
 
-        # Mark as emailed
-        
-
-        # Cleanup
+        # Remove temporary HTML
         os.remove(html_path)
 
     return redirect('enrollview', id=course_id)
@@ -575,6 +582,10 @@ def enrollview(request, id=None):
         'course': course,
         'enrollments': enrollments
     })
+
+def certificate_view(request, id):
+    enroll = Enrollment.objects.get(id=id)
+    return render(request, 'certificate_view.html', {'enroll': enroll})
 
 def historyview(request):
     enrollments = Enrollment.objects.filter(email_status=True)
@@ -603,6 +614,19 @@ def deletecoursebtn(request,id):
     return redirect("/enrollview")
 
 def enroll_single_student(request):
+    student_data = {}
+    student_id = request.GET.get('student_id')
+    print("student_id GET:", student_id)
+    print("student_data:", student_data)
+
+    if student_id:
+        student = Student.objects.get(id=student_id)
+        student_data = {
+            'student_name': student.student_name,
+            'email': student.email,
+            'phone': student.phone,
+        }
+
     courses = Course.objects.all()
 
     if request.method == "POST":
@@ -650,11 +674,15 @@ def enroll_single_student(request):
             student_name=student,
             course_name=course,
             start_date=start_date
+            
         )
 
         return redirect('enrollview', id=course.id)
 
-    return render(request, 'enroll_single.html', {'course': courses})
+    return render(request, 'enroll_single.html', {
+    'course': courses,
+    'student_data': student_data
+})
 
 def history(request):
     enroll=Enrollment.objects.all()
@@ -669,13 +697,9 @@ def myaccount(request):
     user = request.user
     return render(request, 'myaccount.html', {'user': user})
 
-def courselistview(request):
-    # Only include courses that have at least one incomplete enrollment
-    courses_with_incomplete = Course.objects.filter(
-        status=False
-    ).distinct()
 
-    context = {
-        'courselist': courses_with_incomplete
-    }
-    return render(request, 'your_template.html', context)
+
+def delete_history(request, id):
+    enrollment = Enrollment.objects.get (id=id)
+    enrollment.delete()
+    return redirect('history')

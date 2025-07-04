@@ -138,4 +138,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'pyaepp103@gmail.com'
-EMAIL_HOST_PASSWORD = 'xfyr kyqt fnxk nixp'
+EMAIL_HOST_PASSWORD = 'xfyrkyqtfnxknixp'

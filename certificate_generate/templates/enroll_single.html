@@ -18,17 +18,20 @@
         
         <div class="mb-3">
           <label for="student_name" class="form-label">Student Name</label>
-          <input type="text" id="student_name" name="student_name" class="form-control" placeholder="Enter student name" required>
+          <input type="text" id="student_name" name="student_name" class="form-control" placeholder="Enter student name" required
+          value="{{ student_data.student_name|default:'' }}">
         </div>
 
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
-          <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required>
+          <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required
+          value="{{ student_data.email|default:'' }}">
         </div>
 
         <div class="mb-3">
           <label for="phone" class="form-label">Phone</label>
-          <input type="text" id="phone" name="phone" class="form-control" placeholder="Enter phone number">
+          <input type="text" id="phone" name="phone" class="form-control" placeholder="Enter phone number"
+          value="{{ student_data.phone|default:'' }}">
         </div>
 
         <div class="mb-3">
