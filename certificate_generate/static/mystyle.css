@@ -81,7 +81,7 @@ img{
     top:10px;
     left:20px;
     padding: 8px;
-    background-color: skyblue;
+    background-color: rgb(66, 172, 214);
     border-style: none;
     border-radius: 5px;
     width:70px;
@@ -104,9 +104,16 @@ img{
     font-weight: bold;
 }
 .title{
-    color: blue;
+    color: #5b54c9;
     font-size: 25px;
     margin-left: 20px;
     margin-top:5px;
+}
+.acclogo{
+    
+    color: #5b54c9;
+}
+.acclogo:hover{
+    color: #2A2F5B;
 }
 

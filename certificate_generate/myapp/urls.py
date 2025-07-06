@@ -44,7 +44,7 @@ urlpatterns = [
     path('myaccount/', myaccount, name='myaccount'),
     path('certificate/<int:id>/', certificate_view, name='certificate_view'),
     path('delete_history/<int:id>/', delete_history, name='delete_history'),
-
+    path('edit_user/', edit_user_profile, name='edit_user_profile'),
  
 
 

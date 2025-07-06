@@ -42,4 +42,10 @@
   </form>
 </div>
 
+{% if skipped_emails %}
+  <script>
+    alert("The following emails do not exist and were skipped:\n\n{% for email in skipped_emails %}{{ email }}\n{% endfor %}");
+  </script>
+{% endif %}
+
 {% endblock content %}

@@ -13,6 +13,9 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from html2image import Html2Image
 from django.db.models import Count, Q
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 
 import os
 
@@ -365,54 +368,56 @@ def studentinput(request):
 
 def enrollinput(request):
     courses = Course.objects.all()
+    skipped_emails = []
 
     if request.method == "POST":
         uploaded_file = request.FILES.get('list')
         selected_course_name = request.POST.get('course')
         start_date = request.POST.get('start_date')
 
-        course = Course.objects.get(course_name=selected_course_name)
+        try:
+            course = Course.objects.get(course_name=selected_course_name)
+        except Course.DoesNotExist:
+            return render(request, 'enrollinput.html', {
+                'course': courses,
+                'error': 'Selected course does not exist.'
+            })
 
         data = pandas.read_excel(uploaded_file)
+
         for index, row in data.iterrows():
             student_name = str(row['name']).strip()
             email = str(row['email']).strip().lower()
             phone = str(row['phone']).strip()
 
-            # ✅ Get or create Student by email
-            student, created = Student.objects.get_or_create(
-                email=email,
-                defaults={
-                    'student_name': student_name,
-                    'phone': phone
-                }
-            )
-
-            if not created:
-                student.student_name = student_name
-                student.phone = phone
-                student.save()
-
-            # ✅ Check if enrollment already exists for this student and course
-            existing_enrollment = Enrollment.objects.filter(
-                student_name=student,
-                course_name=course
-            ).first()
-
-            if existing_enrollment:
-                # ✅ Skip creating duplicate enrollment
+            # Check if student exists
+            try:
+                student = Student.objects.get(email=email)
+            except Student.DoesNotExist:
+                skipped_emails.append(email)
                 continue
 
-            # ✅ Create new Enrollment
+            student.student_name = student_name
+            student.phone = phone
+            student.save()
+
+            if Enrollment.objects.filter(student_name=student, course_name=course).exists():
+                continue
+
             Enrollment.objects.create(
                 student_name=student,
                 course_name=course,
                 start_date=start_date
             )
 
-        return redirect('enrollview', id=course.id)
+        # Always return to same page with skipped_emails if any
+        return render(request, 'enrollinput.html', {
+            'course': courses,
+            'skipped_emails': skipped_emails
+        })
 
     return render(request, 'enrollinput.html', {'course': courses})
+
 
 
 def email(request, id):
@@ -572,15 +577,21 @@ def enrollview(request, id=None):
     course_name = Course.objects.all()
     course = None
     enrollments = None
+    all_complete = False
 
     if id is not None:
         course = Course.objects.get(id=id)
         enrollments = Enrollment.objects.filter(course_name=course, email_status=False)
 
+        # Check if all enrollments for this course have status=True
+        if enrollments.exists() and not enrollments.filter(status=False).exists():
+            all_complete = True
+
     return render(request, 'enrollview.html', {
         'course_name': course_name,
         'course': course,
-        'enrollments': enrollments
+        'enrollments': enrollments,
+        'all_complete':all_complete
     })
 
 def certificate_view(request, id):
@@ -616,16 +627,17 @@ def deletecoursebtn(request,id):
 def enroll_single_student(request):
     student_data = {}
     student_id = request.GET.get('student_id')
-    print("student_id GET:", student_id)
-    print("student_data:", student_data)
 
     if student_id:
-        student = Student.objects.get(id=student_id)
-        student_data = {
-            'student_name': student.student_name,
-            'email': student.email,
-            'phone': student.phone,
-        }
+        try:
+            student = Student.objects.get(id=student_id)
+            student_data = {
+                'student_name': student.student_name,
+                'email': student.email,
+                'phone': student.phone,
+            }
+        except Student.DoesNotExist:
+            student_data = {}
 
     courses = Course.objects.all()
 
@@ -641,23 +653,29 @@ def enroll_single_student(request):
         except Course.DoesNotExist:
             return render(request, 'enroll_single.html', {
                 'course': courses,
+                'student_data': student_data,
                 'error': 'Selected course does not exist.'
             })
 
-        # ✅ Always get or create Student by email
-        student, created = Student.objects.get_or_create(
-            email=email,
-            defaults={
-                'student_name': student_name,
-                'phone': phone
-            }
-        )
-        if not created:
-            student.student_name = student_name
-            student.phone = phone
-            student.save()
+        # 🚨 New email check — only allow emails already in Student table
+        if not Student.objects.filter(email=email).exists():
+            return render(request, 'enroll_single.html', {
+                'course': courses,
+                'student_data': {
+                    'student_name': student_name,
+                    'email': email,
+                    'phone': phone
+                },
+                'error': 'This email is not registered. Please use a registered student email.'
+            })
 
-        # ✅ Check for existing Enrollment by student (via email) and course
+        # ✅ Get student object (we already know it exists)
+        student = Student.objects.get(email=email)
+        student.student_name = student_name
+        student.phone = phone
+        student.save()
+
+        # ✅ Check for existing Enrollment
         existing_enrollment = Enrollment.objects.filter(
             student_name=student,
             course_name=course
@@ -666,7 +684,8 @@ def enroll_single_student(request):
         if existing_enrollment:
             return render(request, 'enroll_single.html', {
                 'course': courses,
-                'error': 'This student (by email) is already enrolled in the selected course.'
+                'student_data': student_data,
+                'error': 'This student is already enrolled in the selected course.'
             })
 
         # ✅ Create new Enrollment
@@ -674,15 +693,15 @@ def enroll_single_student(request):
             student_name=student,
             course_name=course,
             start_date=start_date
-            
         )
 
         return redirect('enrollview', id=course.id)
 
     return render(request, 'enroll_single.html', {
-    'course': courses,
-    'student_data': student_data
-})
+        'course': courses,
+        'student_data': student_data
+    })
+
 
 def history(request):
     enroll=Enrollment.objects.all()
@@ -703,3 +722,30 @@ def delete_history(request, id):
     enrollment = Enrollment.objects.get (id=id)
     enrollment.delete()
     return redirect('history')
+
+@login_required
+def edit_user_profile(request):
+    user = request.user
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+
+        # Basic validation (optional)
+        if not username or not email:
+            messages.error(request, 'Username and email are required.')
+            return render(request, 'edit_user.html', {'user_obj': user})
+
+        # Update user object
+        user.username = username
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        messages.success(request, 'Profile updated successfully.')
+        return redirect('myaccount')  # reload same page
+
+    return render(request, 'edit_user.html', {'user_obj': user})

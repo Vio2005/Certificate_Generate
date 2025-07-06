@@ -77,53 +77,53 @@
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
               
-              <li class="nav-item">
-                <a href="{% url 'indexview' %}">
+              <li class="nav-item {% if request.resolver_match.url_name == 'indexview' %}active{% endif %}">
+                <a href="{% url 'indexview' %}" >
                   <i class="fas fa-home"></i>
                   <p>Dashboard</p>
                   
                 </a>
                 </li>
               
-              <li class="nav-item">
-                <a href="{% url 'courselist' %}">
+              <li class="nav-item {% if request.resolver_match.url_name == 'courselist' %}active{% endif %}">
+                <a href="{% url 'courselist' %}" >
                   <i class="fas fa-book"></i>
                   <p>Courses</p>
                   
                 </a>
                 </li>
-                <li class="nav-item">
-                  <a href="{% url 'studentlist' %}">
+                <li class="nav-item {% if request.resolver_match.url_name == 'studentlist' %}active{% endif %}">
+                  <a href="{% url 'studentlist' %}" >
                     <i class="fas fa-users"></i>
                     <p>Student</p>
                     
                   </a>
                   </li>
                 
-                  <li class="nav-item">
-                    <a href="{% url 'trainerlist' %}">
+                  <li class="nav-item {% if request.resolver_match.url_name == 'trainerlist' %}active{% endif %}">
+                    <a href="{% url 'trainerlist' %}" >
                       <i class="fas fa-user-check"></i>
                       <p>Trainer</p>
                       
                     </a>
                     </li>
              
-                <li class="nav-item">
-                  <a href="{% url 'enrollview' %}">
+                <li class="nav-item {% if request.resolver_match.url_name == 'enrollview' %}active{% endif %}">
+                  <a href="{% url 'enrollview' %}" >
                     <i class="fas fa-list-ul"></i>
                     <p>Enrollment</p>
                     
                   </a>
                   </li>
-                  <li class="nav-item">
+                  <li class="nav-item {% if request.resolver_match.url_name == 'myaccount' %}active{% endif %}">
                     <a href="{% url 'myaccount' %}">
                       <i class="fas fa-user-circle"></i>
                       <p>My account</p>
                       
                     </a>
                     </li>
-                  <li class="nav-item">
-                    <a href="{% url 'history' %}">
+                  <li class="nav-item {% if request.resolver_match.url_name == 'history' %}active{% endif %}">
+                    <a href="{% url 'history' %}" >
                       <i class="fas fa-clipboard-list"></i>
                       <p>History</p>
                       
@@ -262,10 +262,13 @@
             </div>
             <!-- End Logo Header -->
           </div>
-          <nav
-            class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
-          >
-          <p class="title">Digital Certificate Generation</p>
+          <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+            <div class="container d-flex justify-content-between align-items-center">
+              <p class="title mb-0">Digital Certificate Generation</p>
+              <a href="{% url 'myaccount' %}" class="me-3 acclogo">
+                <i class="fas fa-user-circle fa-2x"></i>
+              </a>
+            </div>
           </nav>
           <!-- Navbar Header -->
           <!-- <nav
@@ -637,31 +640,14 @@
         </div>
 
         <footer class="footer">
-          <div class="container-fluid d-flex justify-content-between">
-            <nav class="pull-left">
-              <ul class="nav">
-                <li class="nav-item">
-                  <a class="nav-link" href="http://www.themekita.com">
-                    ThemeKita
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#"> Help </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#"> Licenses </a>
-                </li>
-              </ul>
-            </nav>
-            <div class="copyright">
-              2024, made with <i class="fa fa-heart heart text-danger"></i> by
-              <a href="http://www.themekita.com">ThemeKita</a>
+          
+            
+            <div class="copyright text-center">
+              Developed by Pyae Pyae
+             
             </div>
-            <div>
-              Distributed by
-              <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>.
-            </div>
-          </div>
+           
+         
         </footer>
       </div>
 
@@ -765,6 +751,16 @@
         event.preventDefault();
       }
     });
+    </script>
+    <script>
+      const navLinks = document.querySelectorAll('.nav-link');
+    
+      navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          navLinks.forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
     </script>
   </body>
 </html>

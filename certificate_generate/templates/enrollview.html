@@ -81,15 +81,20 @@
       Students enrolled in {{ course.course_name }}</div>
       </div>
       </div>
+
       <div class="ms-3 mt-2">
-      <a href="{% url 'complete_all_status' course.id %}" >
-        <button type="button" class="btn btn-success mb-3">Change All to Complete</button>
-        
-      </a>
+      
+      {% if all_complete %}
       <a href="{% url 'email_all' course.id %}" >
         <button type="button" class="btn btn-success mb-3">Email all</button>
         
       </a>
+      {% else %}
+      <a href="{% url 'complete_all_status' course.id %}" >
+        <button type="button" class="btn btn-success mb-3">Change All to Complete</button>
+        
+      </a>
+      {% endif %}
       </div>
       <div class="table-responsive">
         <!-- Projects table -->

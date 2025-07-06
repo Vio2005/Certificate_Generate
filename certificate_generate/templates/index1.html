@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
+
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -47,16 +49,16 @@
     <p class="stuname">{{ enroll.student_name }}</p>
     <p class="having">Having successfully completed the following course</p>
     <p class="course_name">{{ enroll.course_name }}</p> 
-    <p class="date">{{ enroll.start_date }} - {{ enroll.end_date }}</p>
+    <p class="date">{{ enroll.start_date|date:"jS F Y" }} - {{ enroll.end_date|date:"jS F Y" }}</p>
     <p class="rig">RIG/{{ enroll.course_name.short_name }}/{{enroll.enroll_id}}</p> 
-    <p class="sdate">{{ enroll.email_date }}</p>
+    <p class="sdate">{{ enroll.email_date}}</p>
 
   </div>
 
   <button type="button" class="back" onclick="history.back()">
     <i class="fas fa-reply">&nbsp;Back</i> 
   </button>
-  <button class="print" onclick="printcertificate()"><i class="far fa-file">&nbsp;Print</i></button>
+  
   
 
   <script>
