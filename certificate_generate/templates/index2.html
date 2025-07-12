@@ -20,7 +20,7 @@
     <p class="stuname">{{ enroll.student_name }}</p>
     <p class="having">Having successfully completed the following course</p>
     <p class="course_name">{{ enroll.course_name }}</p> 
-    <p class="date">{{ enroll.start_date|date:"jS F Y" }} - {{ enroll.end_date|date:"jS F Y" }}</p>
+    <p class="date">{{ enroll.start_date}} - {{ enroll.end_date }}</p>
     <p class="rig">RIG/{{ enroll.course_name.short_name }}/{{enroll.enroll_id}}</p> 
     <p class="sdate">{{ i.email_date}}</p>
 
