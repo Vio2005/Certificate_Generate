@@ -165,7 +165,7 @@ def register_view(request):
         lastname=request.POST['lname']
         user=User.objects.filter(username=username)
         if user.exists():
-            return redirect('register/')
+            return redirect('/register')
         else:
             usr=User.objects.create_user(username=username,email=email,first_name=firstname,last_name=lastname)
             usr.set_password(password)
