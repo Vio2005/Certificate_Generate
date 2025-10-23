@@ -15,16 +15,18 @@ from html2image import Html2Image
 from django.db.models import Count, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from datetime import datetime
 
 
 import os
 
 # Create your views here.
-def homeview(request,id):
+def homeview(request, id):
     enroll = Enrollment.objects.select_related('course_name').get(id=id)
-    
-    context={"enroll":enroll}
-    return render(request,'index1.html',context)
+
+   
+    context = {"enroll": enroll}
+    return render(request, 'index1.html', context)
 
 def createcourse(request):
     course=CourseModelForm()
@@ -657,23 +659,17 @@ def enroll_single_student(request):
                 'error': 'Selected course does not exist.'
             })
 
-        # 🚨 New email check — only allow emails already in Student table
-        if not Student.objects.filter(email=email).exists():
-            return render(request, 'enroll_single.html', {
-                'course': courses,
-                'student_data': {
-                    'student_name': student_name,
-                    'email': email,
-                    'phone': phone
-                },
-                'error': 'This email is not registered. Please use a registered student email.'
-            })
+        # ✅ Get or create student (no restriction)
+        student, created = Student.objects.get_or_create(
+            email=email,
+            defaults={'student_name': student_name, 'phone': phone}
+        )
 
-        # ✅ Get student object (we already know it exists)
-        student = Student.objects.get(email=email)
-        student.student_name = student_name
-        student.phone = phone
-        student.save()
+        # If student already existed, update info
+        if not created:
+            student.student_name = student_name
+            student.phone = phone
+            student.save()
 
         # ✅ Check for existing Enrollment
         existing_enrollment = Enrollment.objects.filter(

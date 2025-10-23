@@ -17,21 +17,36 @@ img{
     transform: translateX(-50%);
     font-size: 20px;
 }
+.bac{
+     position:absolute;
+    top:40%;
+    left: 50%;
+    opacity: 0.05;
+    font-family: 'Poppins', sans-serif;
+    transform: translateX(-50%);
+    font-weight: 500;
+    font-size: 40px;
+    z-index: 1;
+
+}
 .stuname{
     position:absolute;
     top:43%;
     left: 50%;
     transform: translateX(-50%);
-    font-weight: bold;
+    font-weight: 500;
     font-size: 35px;
+    z-index: 2;
     
 }
+
 .having{
     font-size: 17px;
     position:absolute;
     top:56%;
     left: 50%;
     transform: translateX(-50%);
+    font-family: 'Poppins', sans-serif;
 }
 .course_name{
     font-size: 17px;
@@ -39,6 +54,8 @@ img{
     top:60%;
     left: 50%;
     transform: translateX(-50%);
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
     
 }
 .date{
@@ -47,6 +64,7 @@ img{
     top:64%;
     left: 50%;
     transform: translateX(-50%);
+    font-family: 'Poppins', sans-serif;
     
 }
 .rig{

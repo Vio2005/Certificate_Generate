@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 {% load static %}
 
+{% load date_extras %}
+
 
 <html lang="en">
 <head>
@@ -46,12 +48,14 @@
     
     
     <p class="itis">It is hereby certified that</p>
+    <p class="bac">RIG</p>
     <p class="stuname">{{ enroll.student_name }}</p>
     <p class="having">Having successfully completed the following course</p>
     <p class="course_name">{{ enroll.course_name }}</p> 
-    <p class="date">{{ enroll.start_date }} - {{ enroll.end_date }}</p>
+    <p class="date">{{ enroll.start_date|pretty_date|safe }} - {{ enroll.end_date|pretty_date|safe }}</p>
     <p class="rig">RIG/{{ enroll.course_name.short_name }}/{{enroll.enroll_id}}</p> 
-    <p class="sdate">{{ enroll.email_date}}</p>
+    <p class="sdate">{{ enroll.email_date }}</p>
+
 
   </div>
 
